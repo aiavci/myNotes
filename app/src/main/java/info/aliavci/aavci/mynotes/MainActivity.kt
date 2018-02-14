@@ -1,15 +1,27 @@
 package info.aliavci.aavci.mynotes
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import org.jetbrains.anko.startActivity
+import android.support.v7.app.AppCompatActivity
+import org.jetbrains.anko.*
+import org.jetbrains.anko.sdk25.coroutines.onClick
 
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        MainActivityUI().setContentView(this)
+    }
+}
 
-        startActivity<ContentEditorActivity>()
+class MainActivityUI : AnkoComponent<MainActivity> {
+    override fun createView(ui: AnkoContext<MainActivity>) = with(ui) {
+        verticalLayout {
+            padding = dip(25)
+            button("Text Editor") {
+                onClick {
+                    startActivity<ContentEditorActivity>()
+                }
+            }
+        }
     }
 }
