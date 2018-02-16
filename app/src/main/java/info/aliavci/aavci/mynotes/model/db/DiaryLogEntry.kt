@@ -9,8 +9,8 @@ import info.aliavci.aavci.mynotes.util.dbflow.MainDB
  * Version
  */
 
-@Table(database = MainDB::class, allFields = true)
-class LogEntry {
+@Table(database = MainDB::class, name = "DiaryLogEntry", allFields = true)
+class DiaryLogEntry {
 
     @PrimaryKey
     lateinit var entryId: String

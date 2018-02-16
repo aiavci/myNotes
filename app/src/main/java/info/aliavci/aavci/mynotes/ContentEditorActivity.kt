@@ -2,11 +2,8 @@ package info.aliavci.aavci.mynotes
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import com.raizlabs.android.dbflow.sql.language.SQLite
-import info.aliavci.aavci.mynotes.model.db.LogEntry
-import timber.log.Timber
-import android.provider.ContactsContract.CommonDataKinds.Organization
 import com.raizlabs.android.dbflow.kotlinextensions.save
+import info.aliavci.aavci.mynotes.model.db.DiaryLogEntry
 import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk25.coroutines.onClick
 import java.util.*
@@ -32,10 +29,10 @@ class ContentEditorActivityUI : AnkoComponent<ContentEditorActivity> {
             padding = dip(25)
             button("Save Text") {
                 onClick {
-                    var logEntry: LogEntry = LogEntry()
-                    logEntry.entryId = UUID.randomUUID().toString()
-                    logEntry.entryTitle = "Sample Title"
-                    logEntry.save()
+                    val diaryLogEntry = DiaryLogEntry()
+                    diaryLogEntry.entryId = UUID.randomUUID().toString()
+                    diaryLogEntry.entryTitle = "Sample Title"
+                    diaryLogEntry.save()
                 }
             }
         }
