@@ -5,6 +5,10 @@ import android.support.v7.app.AppCompatActivity
 import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk25.coroutines.onClick
 
+/**
+ * Created by Ali Avci
+ * Version
+ */
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
