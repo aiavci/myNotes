@@ -4,6 +4,8 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+apply plugin: 'kotlin-kapt'
+
 android {
     compileSdkVersion 26
     defaultConfig {
@@ -22,6 +24,8 @@ android {
     }
 }
 
+def dbflow_version = '4.1.2'
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation"org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
@@ -39,4 +43,17 @@ dependencies {
     // Coroutine listeners for Anko Layouts
     implementation "org.jetbrains.anko:anko-sdk25-coroutines:$anko_version"
     implementation "org.jetbrains.anko:anko-appcompat-v7-coroutines:$anko_version"
+
+    // DBFlow
+    implementation "com.github.Raizlabs.DBFlow:dbflow-kotlinextensions:${dbflow_version}"
+    kapt "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
+    implementation "com.github.raizlabs.dbflow:dbflow:${dbflow_version}"
+    implementation "com.github.raizlabs.dbflow:dbflow-core:${dbflow_version}"
+    implementation "com.github.raizlabs.dbflow:dbflow-sqlcipher:${dbflow_version}"
+    kapt "com.github.raizlabs.dbflow:dbflow-processor:${dbflow_version}"
+
+    // Stetho
+    implementation 'com.facebook.stetho:stetho:1.5.0'
+
+    implementation 'com.jakewharton.timber:timber:4.6.1'
 }
