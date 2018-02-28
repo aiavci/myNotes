@@ -7,11 +7,11 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 27
     defaultConfig {
         applicationId "info.aliavci.aavci.mynotes"
         minSdkVersion 19
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -29,7 +29,7 @@ def dbflow_version = '4.1.2'
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation"org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support:appcompat-v7:27.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation "org.jetbrains.anko:anko-commons:$anko_version"
     testImplementation 'junit:junit:4.12'
@@ -53,4 +53,14 @@ dependencies {
     kapt "com.github.raizlabs.dbflow:dbflow-processor:${dbflow_version}"
 
     implementation 'com.jakewharton.timber:timber:4.6.1'
+
+    // Stetho
+    implementation 'com.facebook.stetho:stetho:1.5.0'
+
+    implementation 'joda-time:joda-time:2.9.9'
+}
+kotlin {
+    experimental {
+        coroutines "enable"
+    }
 }

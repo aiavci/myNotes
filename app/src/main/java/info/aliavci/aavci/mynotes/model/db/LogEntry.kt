@@ -15,5 +15,9 @@ class LogEntry {
     @PrimaryKey
     lateinit var entryId: String
 
+    lateinit var entryDate: String
+
     lateinit var entryTitle: String
+
+    lateinit var entryContent: String
 }
