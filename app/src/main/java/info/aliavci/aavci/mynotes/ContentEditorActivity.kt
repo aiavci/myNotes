@@ -8,6 +8,7 @@ import org.jetbrains.anko.AnkoComponent
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.button
 import org.jetbrains.anko.dip
+import org.jetbrains.anko.editText
 import org.jetbrains.anko.padding
 import org.jetbrains.anko.sdk25.coroutines.onClick
 import org.jetbrains.anko.setContentView
@@ -33,12 +34,20 @@ class ContentEditorActivityUI : AnkoComponent<ContentEditorActivity> {
     override fun createView(ui: AnkoContext<ContentEditorActivity>) = with(ui) {
         verticalLayout {
             padding = dip(25)
+            val editTextTitle = editText {
+                hint = "Title"
+                textSize = 16f
+            }
+            val editTextContent = editText {
+                hint = "Content"
+                textSize = 12f
+            }
             button("Save Text") {
                 onClick {
                     LogEntry().apply {
                         entryId = UUID.randomUUID().toString()
-                        entryTitle = "Sample Title"
-                        entryContent = "Sample content"
+                        entryTitle = editTextTitle.text.toString()
+                        entryContent = editTextContent.text.toString()
                         entryDate = DateTime.now().toString()
                         save()
                     }
