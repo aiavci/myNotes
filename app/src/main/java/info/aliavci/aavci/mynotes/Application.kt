@@ -4,6 +4,7 @@ import android.app.Application
 import com.facebook.stetho.Stetho
 import com.raizlabs.android.dbflow.config.FlowConfig
 import com.raizlabs.android.dbflow.config.FlowManager
+import timber.log.Timber
 
 /**
  * Created by Ali Avci
@@ -17,5 +18,9 @@ class Application : Application() {
 
         // Stetho:
         Stetho.initializeWithDefaults(this)
+
+        // Timber logging
+        Timber.plant(Timber.DebugTree())
+
     }
 }
