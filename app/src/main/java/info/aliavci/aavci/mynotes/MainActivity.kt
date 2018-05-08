@@ -2,7 +2,6 @@ package info.aliavci.aavci.mynotes
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.database.sqlite.SQLiteQuery
 import android.graphics.Typeface
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -14,9 +13,7 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.result.Result
-import com.raizlabs.android.dbflow.sql.language.SQLite
 import info.aliavci.aavci.mynotes.model.db.LogEntry
-import info.aliavci.aavci.mynotes.model.db.LogEntry_Table
 import org.jetbrains.anko.AnkoComponent
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.alignParentBottom
@@ -49,6 +46,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         MainActivityUI(notesAdapter).setContentView(this)
 //        downloadContent()
+        getLocalData()
+    }
+
+    override fun onResume() {
+        super.onResume()
         getLocalData()
     }
 

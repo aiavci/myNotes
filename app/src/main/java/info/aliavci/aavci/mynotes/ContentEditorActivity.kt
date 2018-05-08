@@ -4,9 +4,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.widget.EditText
-import com.raizlabs.android.dbflow.kotlinextensions.save
 import info.aliavci.aavci.mynotes.model.db.LogEntry
 import org.jetbrains.anko.AnkoComponent
 import org.jetbrains.anko.AnkoContext
@@ -90,6 +88,7 @@ class ContentEditorActivity : AppCompatActivity() {
                                 save()
                             }
                         }
+                        finish()
                     }
                 }
             }
