@@ -2,6 +2,8 @@ package info.aliavci.aavci.mynotes.model.db
 
 import com.raizlabs.android.dbflow.annotation.PrimaryKey
 import com.raizlabs.android.dbflow.annotation.Table
+import com.raizlabs.android.dbflow.sql.language.SQLite
+import com.raizlabs.android.dbflow.structure.BaseModel
 import info.aliavci.aavci.mynotes.util.dbflow.MainDB
 
 /**
@@ -10,7 +12,7 @@ import info.aliavci.aavci.mynotes.util.dbflow.MainDB
  */
 
 @Table(database = MainDB::class, allFields = true)
-class LogEntry {
+class LogEntry: BaseModel() {
 
     @PrimaryKey
     lateinit var entryId: String
@@ -20,4 +22,19 @@ class LogEntry {
     lateinit var entryTitle: String
 
     lateinit var entryContent: String
+
+    companion object {
+        fun getLogEntries() : MutableList<LogEntry>{
+            return SQLite.select()
+                    .from<LogEntry>(LogEntry::class.java)
+                    .queryList()
+        }
+
+        fun getLogEntry(title: String): LogEntry? {
+            return SQLite.select()
+                    .from<LogEntry>(LogEntry::class.java)
+                    .where(LogEntry_Table.entryTitle.eq(title))
+                    .querySingle()
+        }
+    }
 }
