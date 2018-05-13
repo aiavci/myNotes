@@ -1,8 +1,6 @@
 package info.aliavci.aavci.mynotes
 
 import android.annotation.SuppressLint
-import android.graphics.Color
-import android.graphics.Typeface
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
@@ -20,18 +18,14 @@ import org.jetbrains.anko.AnkoComponent
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.alignParentBottom
 import org.jetbrains.anko.button
-import org.jetbrains.anko.centerInParent
 import org.jetbrains.anko.dip
 import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.padding
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.relativeLayout
-import org.jetbrains.anko.sdk25.coroutines.onClick
 import org.jetbrains.anko.setContentView
 import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.textView
 import timber.log.Timber
-import java.util.*
 
 /**
  * Created by Ali Avci
@@ -39,28 +33,20 @@ import java.util.*
  */
 class MainActivity : AppCompatActivity() {
 
-    val data = mutableListOf("test", "Test")
-
-    private val excitingSection = Section()
-
-//    val notesAdapter by lazy { NotesAdapter(data, this) }
+    val notesAdapter = GroupAdapter<ViewHolder>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        downloadContent()
-        getLocalData()
 
-        val groupAdapter = GroupAdapter<ViewHolder>()
+        val boringFancyItems = getLocalData()
 
-        val boringFancyItems = generateFancyItems(24)
-
-        ExpandableGroup(ExpandableHeaderItem("Boring Group"), true).apply {
+        ExpandableGroup(ExpandableHeaderItem("List of Notes"), true).apply {
             add(Section(boringFancyItems))
-            groupAdapter.add(this)
+            notesAdapter.add(this)
         }
 
-
-        MainActivityUI(groupAdapter).setContentView(this)
+        MainActivityUI(notesAdapter).setContentView(this)
 
 //        fab.setOnClickListener {
 //            excitingFancyItems.shuffle()
@@ -68,25 +54,25 @@ class MainActivity : AppCompatActivity() {
 //        }
     }
 
-    private fun generateFancyItems(count: Int): MutableList<FancyItem>{
-        val rnd = Random()
-        return MutableList(count){
-            val color = Color.argb(255, rnd.nextInt(256),
-                    rnd.nextInt(256), rnd.nextInt(256))
-            FancyItem(color, "Sample title")
-        }
-    }
-
     override fun onResume() {
         super.onResume()
         getLocalData()
     }
 
-    private fun getLocalData() {
+    /**
+     * Get notes from DB
+     */
+    private fun getLocalData(): MutableList<FancyItem>{
         val listOfNotes = LogEntry.getLogEntries()
-//        notesAdapter.update(listOfNotes.map { it.entryTitle }.toMutableList())
+        return listOfNotes.map {
+            FancyItem(it.entryTitle)
+        }.toMutableList()
+
     }
 
+    /**
+     * Downloads data with content
+     */
     private fun downloadContent() {
         //an extension over string (support GET, PUT, POST, DELETE with httpGet(), httpPut(), httpPost(), httpDelete())
         "http://httpbin.org/get".httpGet().responseString { request, response, result ->
@@ -114,29 +100,14 @@ class MainActivityUI(val groupAdapter: GroupAdapter<ViewHolder>) : AnkoComponent
         return relativeLayout {
             padding = dip(25)
 
-            val emptyView = textView("Say something outrageous.") {
-                textSize = 16f
-                typeface = Typeface.MONOSPACE
-            }.lparams {
-                centerInParent()
-            }
-
             // BUTTON
             button("New Note") {
-                onClick {
+                setOnClickListener {
                     startActivity<ContentEditorActivity>()
                 }
             }.lparams {
                 alignParentBottom()
                 width = matchParent
-            }
-
-            fun updateEmptyViewVisibility(recyclerView: RecyclerView) {
-                if (doesListHaveItem(recyclerView)) {
-                    emptyView.visibility = View.GONE
-                } else {
-                    emptyView.visibility = View.VISIBLE
-                }
             }
 
             // LIST

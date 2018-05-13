@@ -12,7 +12,7 @@ import org.jetbrains.anko.verticalPadding
 import org.jetbrains.anko.wrapContent
 
 /**
- * Created by ${$FULLNAME}
+ * Created by Ali Avci
  * Version
  */
 class NotesAdapter(var listOfNotes: MutableList<String>, val context: Context) : RecyclerView.Adapter<NoteHolder>() {

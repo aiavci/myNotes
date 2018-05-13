@@ -1,21 +1,22 @@
 package info.aliavci.aavci.mynotes
 
-import android.support.annotation.ColorInt
 import com.xwray.groupie.kotlinandroidextensions.Item
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
 import kotlinx.android.synthetic.main.item_fancy.view.*
+import org.jetbrains.anko.startActivity
 
 /**
  * Created by Ali Avci
  * Version
  */
-
-class FancyItem(@ColorInt private val color: Int, private val title: String): Item() {
+class FancyItem(private val title: String): Item() {
 
     override fun bind(viewHolder: ViewHolder, position: Int) {
         viewHolder.itemView.apply {
-            item_fancy_cardView.setCardBackgroundColor(color)
             item_fancy_number.text = title
+            setOnClickListener {
+                context.startActivity<ContentEditorActivity>("TITLE" to title)
+            }
         }
     }
 
