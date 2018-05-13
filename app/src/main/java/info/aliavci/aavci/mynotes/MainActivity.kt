@@ -13,6 +13,7 @@ import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Section
 import com.xwray.groupie.ViewHolder
 import info.aliavci.aavci.mynotes.model.db.LogEntry
+import info.aliavci.aavci.mynotes.model.db.LogEntry.Companion.getLogEntries
 import org.jetbrains.anko.AnkoComponent
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.alignParentBottom
@@ -51,17 +52,46 @@ class MainActivity : AppCompatActivity() {
     private fun updateExpandableGroup() {
         notesAdapter.clear()
 
-        ExpandableGroup(ExpandableHeaderItem("List of Notes"), true).apply {
-            add(Section(getLocalData()))
-            notesAdapter.add(this)
+        val allEntries = getLogEntries() ?: return
+
+        if (allEntries.isEmpty()) {
+            return
         }
+
+        val firstMonth = getMonthValue(allEntries.first().entryTitle)
+        val lastMonth = getMonthValue(allEntries.last().entryTitle)
+
+        val firstYear = getYearValue(allEntries.first().entryTitle)
+        val lastYear = getYearValue(allEntries.last().entryTitle)
+
+        if (firstMonth == null || lastMonth == null) {
+            return
+        }
+
+        for (selectedMonth in firstMonth.toInt()..lastMonth.toInt()) {
+            val selectedMonthString = selectedMonth.toString().padStart(2, '0')
+            ExpandableGroup(ExpandableHeaderItem("Month: $selectedMonthString"), false).apply {
+                add(Section(getLocalData(selectedMonthString, "18")))
+                notesAdapter.add(this)
+            }
+        }
+    }
+
+    private fun getMonthValue(title: String): Int? {
+        val regexCode = "Log-[0-9][0-9]-([^#&]+)-[0-9][0-9].*.txt".toRegex()
+        return regexCode.matchEntire(title)?.groups?.get(1)?.value?.toInt()
+    }
+
+    private fun getYearValue(title: String): Int? {
+        val regexCode = "Log-[0-9][0-9]-[0-9][0-9]-([^#&]+).*.txt".toRegex()
+        return regexCode.matchEntire(title)?.groups?.get(1)?.value?.toInt()
     }
 
     /**
      * Get notes from DB
      */
-    private fun getLocalData(): MutableList<FancyItem> {
-        val listOfNotes = LogEntry.getLogEntries("01")
+    private fun getLocalData(month: String, year: String): MutableList<FancyItem> {
+        val listOfNotes = LogEntry.getLogEntries(month) ?: mutableListOf()
         return listOfNotes.map {
             FancyItem(it.entryTitle)
         }.toMutableList()

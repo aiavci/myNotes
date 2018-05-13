@@ -24,13 +24,14 @@ class LogEntry: BaseModel() {
     lateinit var entryContent: String
 
     companion object {
-        fun getLogEntries() : MutableList<LogEntry>{
+        fun getLogEntries() : MutableList<LogEntry>? {
             return SQLite.select()
                     .from<LogEntry>(LogEntry::class.java)
+                    .orderBy(LogEntry_Table.entryTitle.asc())
                     .queryList()
         }
 
-        fun getLogEntries(month: String): MutableList<LogEntry> {
+        fun getLogEntries(month: String): MutableList<LogEntry>? {
             return SQLite.select()
                     .from<LogEntry>(LogEntry::class.java)
                     .where(LogEntry_Table.entryTitle.like("Log-__-%$month%"))
