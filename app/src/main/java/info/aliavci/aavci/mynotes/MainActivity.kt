@@ -1,30 +1,29 @@
 package info.aliavci.aavci.mynotes
 
 import android.annotation.SuppressLint
-import android.graphics.Typeface
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.GridLayoutManager
 import android.view.View
 import android.widget.FrameLayout
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.result.Result
+import com.xwray.groupie.ExpandableGroup
+import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.Section
+import com.xwray.groupie.ViewHolder
 import info.aliavci.aavci.mynotes.model.db.LogEntry
 import org.jetbrains.anko.AnkoComponent
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.alignParentBottom
 import org.jetbrains.anko.button
-import org.jetbrains.anko.centerInParent
 import org.jetbrains.anko.dip
 import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.padding
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.relativeLayout
-import org.jetbrains.anko.sdk25.coroutines.onClick
 import org.jetbrains.anko.setContentView
 import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.textView
 import timber.log.Timber
 
 /**
@@ -33,27 +32,43 @@ import timber.log.Timber
  */
 class MainActivity : AppCompatActivity() {
 
-    val data = mutableListOf("test", "Test")
-
-    val notesAdapter by lazy { NotesAdapter(data, this) }
+    val notesAdapter = GroupAdapter<ViewHolder>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        MainActivityUI(notesAdapter).setContentView(this)
 //        downloadContent()
-        getLocalData()
+
+        updateExpandableGroup()
+        MainActivityUI().setContentView(this)
     }
 
     override fun onResume() {
         super.onResume()
-        getLocalData()
+
+        updateExpandableGroup()
     }
 
-    private fun getLocalData() {
+    private fun updateExpandableGroup() {
+        ExpandableGroup(ExpandableHeaderItem("List of Notes"), true).apply {
+            add(Section(getLocalData()))
+            notesAdapter.clear()
+            notesAdapter.add(this)
+        }
+    }
+
+    /**
+     * Get notes from DB
+     */
+    private fun getLocalData(): MutableList<FancyItem> {
         val listOfNotes = LogEntry.getLogEntries()
-        notesAdapter.update(listOfNotes.map { it.entryTitle }.toMutableList())
+        return listOfNotes.map {
+            FancyItem(it.entryTitle)
+        }.toMutableList()
     }
 
+    /**
+     * Downloads data with content and updates DB
+     */
     private fun downloadContent() {
         //an extension over string (support GET, PUT, POST, DELETE with httpGet(), httpPut(), httpPost(), httpDelete())
         "http://httpbin.org/get".httpGet().responseString { request, response, result ->
@@ -68,74 +83,48 @@ class MainActivity : AppCompatActivity() {
 
                     Timber.d("get success $data")
 
-                    notesAdapter.update(mutableListOf("Log 1", "Log 2"))
+//                    notesAdapter.update(mutableListOf("Log 1", "Log 2"))
                 }
             }
         }
     }
-}
 
-class MainActivityUI(val listAdapter: NotesAdapter) : AnkoComponent<MainActivity> {
-    @SuppressLint("ResourceType")
-    override fun createView(ui: AnkoContext<MainActivity>): View = with(ui) {
-        return relativeLayout {
-            padding = dip(25)
+    inner class MainActivityUI : AnkoComponent<MainActivity> {
+        @SuppressLint("ResourceType")
+        override fun createView(ui: AnkoContext<MainActivity>): View = with(ui) {
+            return relativeLayout {
+                padding = dip(25)
 
-            val emptyView = textView("Say something outrageous.") {
-                textSize = 16f
-                typeface = Typeface.MONOSPACE
-            }.lparams {
-                centerInParent()
-            }
-
-            // BUTTON
-            button("New Note") {
-                onClick {
-                    startActivity<ContentEditorActivity>()
-                }
-            }.lparams {
-                alignParentBottom()
-                width = matchParent
-            }
-
-            fun updateEmptyViewVisibility(recyclerView: RecyclerView) {
-                if (doesListHaveItem(recyclerView)) {
-                    emptyView.visibility = View.GONE
-                } else {
-                    emptyView.visibility = View.VISIBLE
-                }
-            }
-
-            // LIST
-            recyclerView {
-                val orientation = LinearLayoutManager.VERTICAL
-                layoutManager = LinearLayoutManager(context, orientation, true)
-                overScrollMode = View.OVER_SCROLL_NEVER
-                adapter = listAdapter
-                adapter.registerAdapterDataObserver(
-                        object : RecyclerView.AdapterDataObserver() {
-                            override fun onItemRangeInserted(start: Int, count: Int) {
-                                updateEmptyViewVisibility(this@recyclerView)
-                            }
-
-                            override fun onItemRangeRemoved(start: Int, count: Int) {
-                                updateEmptyViewVisibility(this@recyclerView)
-                            }
-                        })
-
-                updateEmptyViewVisibility(this)
-            }
-        }.apply {
-            layoutParams = FrameLayout.LayoutParams(matchParent, matchParent)
-                    .apply {
-                        leftMargin = dip(16)
-                        rightMargin = dip(16)
-                        bottomMargin = dip(16)
+                // BUTTON
+                button("New Note") {
+                    setOnClickListener {
+                        startActivity<ContentEditorActivity>()
                     }
+                }.lparams {
+                    alignParentBottom()
+                    width = matchParent
+                }
+
+                // LIST
+                recyclerView {
+                    id = R.id.recycler_view
+                    layoutManager = GridLayoutManager(context, notesAdapter.spanCount).apply {
+                        spanSizeLookup = notesAdapter.spanSizeLookup
+                    }
+                    adapter = notesAdapter
+                }.lparams {
+                    width = matchParent
+                    height = matchParent
+                }
+
+            }.apply {
+                layoutParams = FrameLayout.LayoutParams(matchParent, matchParent)
+                        .apply {
+                            leftMargin = dip(16)
+                            rightMargin = dip(16)
+                            bottomMargin = dip(16)
+                        }
+            }
         }
     }
-
-    private fun doesListHaveItem(list: RecyclerView?) = getListItemCount(list) > 0
-
-    private fun getListItemCount(list: RecyclerView?) = list?.adapter?.itemCount ?: 0
 }
