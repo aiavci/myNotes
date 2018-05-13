@@ -1,15 +1,20 @@
 package info.aliavci.aavci.mynotes
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.FrameLayout
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.result.Result
+import com.xwray.groupie.ExpandableGroup
+import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.Section
+import com.xwray.groupie.ViewHolder
 import info.aliavci.aavci.mynotes.model.db.LogEntry
 import org.jetbrains.anko.AnkoComponent
 import org.jetbrains.anko.AnkoContext
@@ -26,6 +31,7 @@ import org.jetbrains.anko.setContentView
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.textView
 import timber.log.Timber
+import java.util.*
 
 /**
  * Created by Ali Avci
@@ -35,13 +41,40 @@ class MainActivity : AppCompatActivity() {
 
     val data = mutableListOf("test", "Test")
 
-    val notesAdapter by lazy { NotesAdapter(data, this) }
+    private val excitingSection = Section()
+
+//    val notesAdapter by lazy { NotesAdapter(data, this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        MainActivityUI(notesAdapter).setContentView(this)
 //        downloadContent()
         getLocalData()
+
+        val groupAdapter = GroupAdapter<ViewHolder>()
+
+        val boringFancyItems = generateFancyItems(24)
+
+        ExpandableGroup(ExpandableHeaderItem("Boring Group"), true).apply {
+            add(Section(boringFancyItems))
+            groupAdapter.add(this)
+        }
+
+
+        MainActivityUI(groupAdapter).setContentView(this)
+
+//        fab.setOnClickListener {
+//            excitingFancyItems.shuffle()
+//            excitingSection.update(excitingFancyItems)
+//        }
+    }
+
+    private fun generateFancyItems(count: Int): MutableList<FancyItem>{
+        val rnd = Random()
+        return MutableList(count){
+            val color = Color.argb(255, rnd.nextInt(256),
+                    rnd.nextInt(256), rnd.nextInt(256))
+            FancyItem(color, "Sample title")
+        }
     }
 
     override fun onResume() {
@@ -51,7 +84,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun getLocalData() {
         val listOfNotes = LogEntry.getLogEntries()
-        notesAdapter.update(listOfNotes.map { it.entryTitle }.toMutableList())
+//        notesAdapter.update(listOfNotes.map { it.entryTitle }.toMutableList())
     }
 
     private fun downloadContent() {
@@ -68,14 +101,14 @@ class MainActivity : AppCompatActivity() {
 
                     Timber.d("get success $data")
 
-                    notesAdapter.update(mutableListOf("Log 1", "Log 2"))
+//                    notesAdapter.update(mutableListOf("Log 1", "Log 2"))
                 }
             }
         }
     }
 }
 
-class MainActivityUI(val listAdapter: NotesAdapter) : AnkoComponent<MainActivity> {
+class MainActivityUI(val groupAdapter: GroupAdapter<ViewHolder>) : AnkoComponent<MainActivity> {
     @SuppressLint("ResourceType")
     override fun createView(ui: AnkoContext<MainActivity>): View = with(ui) {
         return relativeLayout {
@@ -108,23 +141,16 @@ class MainActivityUI(val listAdapter: NotesAdapter) : AnkoComponent<MainActivity
 
             // LIST
             recyclerView {
-                val orientation = LinearLayoutManager.VERTICAL
-                layoutManager = LinearLayoutManager(context, orientation, true)
-                overScrollMode = View.OVER_SCROLL_NEVER
-                adapter = listAdapter
-                adapter.registerAdapterDataObserver(
-                        object : RecyclerView.AdapterDataObserver() {
-                            override fun onItemRangeInserted(start: Int, count: Int) {
-                                updateEmptyViewVisibility(this@recyclerView)
-                            }
-
-                            override fun onItemRangeRemoved(start: Int, count: Int) {
-                                updateEmptyViewVisibility(this@recyclerView)
-                            }
-                        })
-
-                updateEmptyViewVisibility(this)
+                id = R.id.recycler_view
+                layoutManager = GridLayoutManager(context, groupAdapter.spanCount).apply {
+                    spanSizeLookup = groupAdapter.spanSizeLookup
+                }
+                adapter = groupAdapter
+            }.lparams {
+                width = matchParent
+                height = matchParent
             }
+
         }.apply {
             layoutParams = FrameLayout.LayoutParams(matchParent, matchParent)
                     .apply {
