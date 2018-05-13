@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
             notesAdapter.add(this)
         }
 
-        MainActivityUI(notesAdapter).setContentView(this)
+        MainActivityUI().setContentView(this)
     }
 
     override fun onResume() {
@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
     /**
      * Get notes from DB
      */
-    private fun getLocalData(): MutableList<FancyItem>{
+    private fun getLocalData(): MutableList<FancyItem> {
         val listOfNotes = LogEntry.getLogEntries()
         return listOfNotes.map {
             FancyItem(it.entryTitle)
@@ -85,43 +85,43 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-}
 
-class MainActivityUI(val groupAdapter: GroupAdapter<ViewHolder>) : AnkoComponent<MainActivity> {
-    @SuppressLint("ResourceType")
-    override fun createView(ui: AnkoContext<MainActivity>): View = with(ui) {
-        return relativeLayout {
-            padding = dip(25)
+    inner class MainActivityUI : AnkoComponent<MainActivity> {
+        @SuppressLint("ResourceType")
+        override fun createView(ui: AnkoContext<MainActivity>): View = with(ui) {
+            return relativeLayout {
+                padding = dip(25)
 
-            // BUTTON
-            button("New Note") {
-                setOnClickListener {
-                    startActivity<ContentEditorActivity>()
-                }
-            }.lparams {
-                alignParentBottom()
-                width = matchParent
-            }
-
-            // LIST
-            recyclerView {
-                id = R.id.recycler_view
-                layoutManager = GridLayoutManager(context, groupAdapter.spanCount).apply {
-                    spanSizeLookup = groupAdapter.spanSizeLookup
-                }
-                adapter = groupAdapter
-            }.lparams {
-                width = matchParent
-                height = matchParent
-            }
-
-        }.apply {
-            layoutParams = FrameLayout.LayoutParams(matchParent, matchParent)
-                    .apply {
-                        leftMargin = dip(16)
-                        rightMargin = dip(16)
-                        bottomMargin = dip(16)
+                // BUTTON
+                button("New Note") {
+                    setOnClickListener {
+                        startActivity<ContentEditorActivity>()
                     }
+                }.lparams {
+                    alignParentBottom()
+                    width = matchParent
+                }
+
+                // LIST
+                recyclerView {
+                    id = R.id.recycler_view
+                    layoutManager = GridLayoutManager(context, notesAdapter.spanCount).apply {
+                        spanSizeLookup = notesAdapter.spanSizeLookup
+                    }
+                    adapter = notesAdapter
+                }.lparams {
+                    width = matchParent
+                    height = matchParent
+                }
+
+            }.apply {
+                layoutParams = FrameLayout.LayoutParams(matchParent, matchParent)
+                        .apply {
+                            leftMargin = dip(16)
+                            rightMargin = dip(16)
+                            bottomMargin = dip(16)
+                        }
+            }
         }
     }
 }
