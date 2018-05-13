@@ -1,16 +1,13 @@
 package info.aliavci.aavci.mynotes
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.graphics.Typeface
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
-import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.TextView
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.result.Result
 import info.aliavci.aavci.mynotes.model.db.LogEntry
@@ -28,8 +25,6 @@ import org.jetbrains.anko.sdk25.coroutines.onClick
 import org.jetbrains.anko.setContentView
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.textView
-import org.jetbrains.anko.verticalPadding
-import org.jetbrains.anko.wrapContent
 import timber.log.Timber
 
 /**
@@ -143,48 +138,4 @@ class MainActivityUI(val listAdapter: NotesAdapter) : AnkoComponent<MainActivity
     private fun doesListHaveItem(list: RecyclerView?) = getListItemCount(list) > 0
 
     private fun getListItemCount(list: RecyclerView?) = list?.adapter?.itemCount ?: 0
-}
-
-class Holder(val textView: TextView) : RecyclerView.ViewHolder(textView)
-
-class NotesAdapter(var listOfNotes: MutableList<String>, val context: Context) : RecyclerView.Adapter<Holder>() {
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
-        return Holder(TextView(parent.context).apply {
-            textSize = 20f
-            background = context.obtainStyledAttributes(arrayOf(R.attr.selectableItemBackground).toIntArray()).getDrawable(0)
-            verticalPadding = context.dip(8)
-            isClickable = true
-            layoutParams = ViewGroup.LayoutParams(matchParent, wrapContent)
-        })
-    }
-
-    override fun onBindViewHolder(holder: Holder, position: Int) {
-        val title = listOfNotes[position]
-        holder.textView.apply {
-            text = title
-            onClick { navigateToLogEntry(title) }
-        }
-    }
-
-    private fun navigateToLogEntry(title: String) {
-        context.startActivity<ContentEditorActivity>("TITLE" to title)
-    }
-
-    override fun getItemCount(): Int = listOfNotes.size
-
-    fun update (newListOfNotes: MutableList<String>) {
-        listOfNotes = newListOfNotes
-        notifyDataSetChanged()
-    }
-
-    fun push(text: String) {
-        listOfNotes.add(0, text)
-        notifyItemInserted(0)
-    }
-
-    fun pop() {
-        listOfNotes.remove(listOfNotes.last())
-        notifyItemRemoved(listOfNotes.size)
-    }
 }
