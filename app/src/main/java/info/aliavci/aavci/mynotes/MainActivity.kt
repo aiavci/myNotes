@@ -38,19 +38,22 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 //        downloadContent()
 
-        val boringFancyItems = getLocalData()
-
-        ExpandableGroup(ExpandableHeaderItem("List of Notes"), true).apply {
-            add(Section(boringFancyItems))
-            notesAdapter.add(this)
-        }
-
+        updateExpandableGroup()
         MainActivityUI().setContentView(this)
     }
 
     override fun onResume() {
         super.onResume()
-        getLocalData()
+
+        updateExpandableGroup()
+    }
+
+    private fun updateExpandableGroup() {
+        ExpandableGroup(ExpandableHeaderItem("List of Notes"), true).apply {
+            add(Section(getLocalData()))
+            notesAdapter.clear()
+            notesAdapter.add(this)
+        }
     }
 
     /**
