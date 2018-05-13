@@ -30,6 +30,13 @@ class LogEntry: BaseModel() {
                     .queryList()
         }
 
+        fun getLogEntries(month: String): MutableList<LogEntry> {
+            return SQLite.select()
+                    .from<LogEntry>(LogEntry::class.java)
+                    .where(LogEntry_Table.entryTitle.like("Log-__-%$month%"))
+                    .queryList()
+        }
+
         fun getLogEntry(title: String): LogEntry? {
             return SQLite.select()
                     .from<LogEntry>(LogEntry::class.java)

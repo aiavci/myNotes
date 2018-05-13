@@ -49,9 +49,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateExpandableGroup() {
+        notesAdapter.clear()
+
         ExpandableGroup(ExpandableHeaderItem("List of Notes"), true).apply {
             add(Section(getLocalData()))
-            notesAdapter.clear()
             notesAdapter.add(this)
         }
     }
@@ -60,7 +61,7 @@ class MainActivity : AppCompatActivity() {
      * Get notes from DB
      */
     private fun getLocalData(): MutableList<FancyItem> {
-        val listOfNotes = LogEntry.getLogEntries()
+        val listOfNotes = LogEntry.getLogEntries("01")
         return listOfNotes.map {
             FancyItem(it.entryTitle)
         }.toMutableList()
