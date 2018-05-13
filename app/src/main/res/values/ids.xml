@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <item type="id" name="spinner_view" />
     <item type="id" name="recycler_view" />
+    <item type="id" name="new_note_button" />
+    <item type="id" name="list_label" />
 </resources>
