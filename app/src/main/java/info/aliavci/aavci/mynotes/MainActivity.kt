@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.FrameLayout
 import com.github.kittinunf.fuel.httpGet
@@ -47,11 +46,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         MainActivityUI(notesAdapter).setContentView(this)
-
-//        fab.setOnClickListener {
-//            excitingFancyItems.shuffle()
-//            excitingSection.update(excitingFancyItems)
-//        }
     }
 
     override fun onResume() {
@@ -67,11 +61,10 @@ class MainActivity : AppCompatActivity() {
         return listOfNotes.map {
             FancyItem(it.entryTitle)
         }.toMutableList()
-
     }
 
     /**
-     * Downloads data with content
+     * Downloads data with content and updates DB
      */
     private fun downloadContent() {
         //an extension over string (support GET, PUT, POST, DELETE with httpGet(), httpPut(), httpPost(), httpDelete())
@@ -131,8 +124,4 @@ class MainActivityUI(val groupAdapter: GroupAdapter<ViewHolder>) : AnkoComponent
                     }
         }
     }
-
-    private fun doesListHaveItem(list: RecyclerView?) = getListItemCount(list) > 0
-
-    private fun getListItemCount(list: RecyclerView?) = list?.adapter?.itemCount ?: 0
 }
