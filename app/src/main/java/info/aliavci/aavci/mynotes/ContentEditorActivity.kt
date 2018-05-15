@@ -1,5 +1,6 @@
 package info.aliavci.aavci.mynotes
 
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.text.Editable
@@ -16,6 +17,7 @@ import org.jetbrains.anko.sdk25.coroutines.onClick
 import org.jetbrains.anko.setContentView
 import org.jetbrains.anko.verticalLayout
 import org.joda.time.DateTime
+import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -66,13 +68,41 @@ class ContentEditorActivity : AppCompatActivity() {
                         }
 
                     })
+                    onClick {
+                        // Get Current Date
+                        val c = Calendar.getInstance()
+                        val mYear = c.get(Calendar.YEAR)
+                        val mMonth = c.get(Calendar.MONTH)
+                        val mDay = c.get(Calendar.DAY_OF_MONTH)
+
+                        val datePickerDialog = DatePickerDialog(getContext(),
+                                DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+                                    val simpleDateFormat = SimpleDateFormat("EEE", Locale.ENGLISH)
+
+                                    val cal = Calendar.getInstance().apply {
+                                        set(Calendar.YEAR, year)
+                                        set(Calendar.MONTH, monthOfYear)
+                                        set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                                    }
+                                    val dateRepresentation = cal.time
+
+                                    val selectedMonthString = (monthOfYear + 1).toString().padStart(2, '0')
+                                    val selectedDayString = dayOfMonth.toString().padStart(2, '0')
+
+                                    setText("Log-$selectedDayString-$selectedMonthString-" +
+                                            "${year.toString().takeLast(2)}-" +
+                                            "${simpleDateFormat.format(dateRepresentation)}.txt")
+
+                                }, mYear, mMonth, mDay)
+                        datePickerDialog.show()
+                    }
                 }
                 editTextContent = editText {
                     hint = "Content"
                     textSize = 12f
                 }
                 button("Save Text") {
-                    onClick {
+                    setOnClickListener {
                         if (logEntry != null) {
                             logEntry?.apply {
                                 entryTitle = editTextTitle.text.toString()

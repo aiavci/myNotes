@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">myNotes</string>
     <string name="editing_file">Editing file: %s</string>
-    <string name="select_year">Select Year</string>
+    <string name="select_year">All Notes For Selected Year:</string>
 </resources>

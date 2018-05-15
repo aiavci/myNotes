@@ -6,7 +6,6 @@ import android.support.constraint.ConstraintSet.HORIZONTAL
 import android.support.constraint.ConstraintSet.PARENT_ID
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
-import android.view.Gravity
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.FrameLayout
@@ -163,15 +162,6 @@ class MainActivity : AppCompatActivity() {
                     margin = dip(10)
                 }
 
-                textView {
-                    id = R.id.list_label
-                    text = "All Notes For Selected Year"
-                    gravity = Gravity.CENTER
-                }.lparams(width = matchParent, height = wrapContent) {
-                    topToBottom = R.id.spinner_view
-                    margin = dip(10)
-                }
-
                 // LIST
                 recyclerView {
                     id = R.id.recycler_view
@@ -181,7 +171,7 @@ class MainActivity : AppCompatActivity() {
                     adapter = notesAdapter
                 }.lparams(width = matchParent, height = wrapContent) {
                     margin = dip(10)
-                    topToBottom = R.id.list_label
+                    topToBottom = R.id.spinner_view
                 }
 
                 // BUTTON
