@@ -85,4 +85,6 @@ dependencies {
     implementation "com.xwray:groupie-kotlin-android-extensions:$groupie_version"
 
     implementation 'com.android.support:cardview-v7:27.0.2'
+
+    implementation 'com.dropbox.core:dropbox-core-sdk:3.0.7'
 }
