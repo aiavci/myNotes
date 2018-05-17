@@ -68,11 +68,11 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        val firstMonth = getMonthValue(allEntries.first().entryTitle)
-        val lastMonth = getMonthValue(allEntries.last().entryTitle)
+        val firstMonth = 1//getMonthValue(allEntries.first().entryTitle)
+        val lastMonth = 12//getMonthValue(allEntries.last().entryTitle)
 
-        val firstYear = getYearValue(allEntries.first().entryTitle)
-        val lastYear = getYearValue(allEntries.last().entryTitle)
+        val firstYear = 16//getYearValue(allEntries.first().entryTitle)
+        val lastYear = 18//getYearValue(allEntries.last().entryTitle)
 
 
         if (firstMonth == null || lastMonth == null ||
